@@ -230,8 +230,11 @@ VS Code: Development environment
 
 ### Available Views
 1. **Dashboard** - Balance summary + transaction list
+   
 2. **Add Transaction** - Form for adding entries
+<img width="1919" height="908" alt="Screenshot 2025-10-05 113101" src="https://github.com/user-attachments/assets/0f838eac-3bb4-49ee-91aa-413cc4b8d544" />
 3. **Reports** - Financial analysis by category
+<img width="1917" height="911" alt="Screenshot 2025-10-05 113127" src="https://github.com/user-attachments/assets/187e4185-b436-42f1-ab46-b77015ee31da" />
 
 ### User Interface Features
 - ✅ Purple gradient background
