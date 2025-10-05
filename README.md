@@ -213,18 +213,21 @@ This repository includes comprehensive documentation:
 - Balance summary cards (Total, Income, Expenses)
 - Recent transactions list
 - Delete functionality with animations
+ <img width="1919" height="910" alt="Screenshot 2025-10-05 113840" src="https://github.com/user-attachments/assets/1e21bde8-c59f-4044-810a-bbc0fd58068b" />
 
 ### Add Transaction
 - Clean form interface
 - Type selection (Income/Expense)
 - Dynamic category dropdown
 - Date picker
+ <img width="1919" height="908" alt="Screenshot 2025-10-05 113101" src="https://github.com/user-attachments/assets/47f90731-2473-4860-93f6-3f180edb40cb" />
 
 ### Reports
 - Financial summary
 - Income by category
 - Expenses by category
 - Transaction statistics
+<img width="1919" height="910" alt="Screenshot 2025-10-05 113840" src="https://github.com/user-attachments/assets/9ee862bc-a291-41d9-a0e1-6471323eaecc" />
 
 ## 🎨 Design Features
 
