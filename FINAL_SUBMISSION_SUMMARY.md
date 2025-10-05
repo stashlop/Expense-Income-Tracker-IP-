@@ -230,7 +230,7 @@ VS Code: Development environment
 
 ### Available Views
 1. **Dashboard** - Balance summary + transaction list
-   
+<img width="1919" height="910" alt="image" src="https://github.com/user-attachments/assets/aef3f7ee-d5b2-4295-a334-6c905a0826b0" />
 2. **Add Transaction** - Form for adding entries
 <img width="1919" height="908" alt="Screenshot 2025-10-05 113101" src="https://github.com/user-attachments/assets/0f838eac-3bb4-49ee-91aa-413cc4b8d544" />
 3. **Reports** - Financial analysis by category
