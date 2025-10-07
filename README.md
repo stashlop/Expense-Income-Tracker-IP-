@@ -171,6 +171,28 @@ IP/
   - `onDelete` - Function to delete transactions
 - **Features**: Empty state handling, maps through array, renders TransactionItem components
 
+**Basic Code:**
+```javascript
+function TransactionList({ transactions, onDelete }) {
+  if (transactions.length === 0) {
+    return <div>No transactions yet. Add your first transaction!</div>;
+  }
+  
+  return (
+    <div className="transaction-list">
+      <h2>Recent Transactions</h2>
+      {transactions.map((transaction) => (
+        <TransactionItem
+          key={transaction.id}
+          transaction={transaction}
+          onDelete={onDelete}
+        />
+      ))}
+    </div>
+  );
+}
+```
+
 #### `TransactionItem`
 - **Purpose**: Renders individual transaction card
 - **Props**:
@@ -178,25 +200,291 @@ IP/
   - `onDelete` - Delete handler function
 - **Features**: Color-coded by type, animated delete, displays all transaction details
 
+**Basic Code:**
+```javascript
+function TransactionItem({ transaction, onDelete }) {
+  return (
+    <div className={`transaction-item ${transaction.type}`}>
+      <div className="transaction-info">
+        <h4>{transaction.description}</h4>
+        <p>{transaction.category} • {new Date(transaction.date).toLocaleDateString()}</p>
+      </div>
+      <div className="transaction-amount">
+        <span className={`amount ${transaction.type}`}>
+          {transaction.type === 'income' ? '+' : '-'}${transaction.amount.toFixed(2)}
+        </span>
+        <button onClick={() => onDelete(transaction.id)}>Delete</button>
+      </div>
+    </div>
+  );
+}
+```
+
 #### `AddTransactionForm`
 - **Purpose**: Form for adding new income/expense transactions
 - **Props**:
   - `onAddTransaction` - Function to add transaction to state
 - **Features**: Form validation, dynamic categories, controlled inputs, auto-navigation
 
+**Basic Code:**
+```javascript
+function AddTransactionForm({ onAddTransaction }) {
+  const [formData, setFormData] = useState({
+    type: 'expense',
+    description: '',
+    amount: '',
+    category: '',
+    date: new Date().toISOString().split('T')[0]
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const transaction = {
+      id: Date.now(),
+      ...formData,
+      amount: parseFloat(formData.amount)
+    };
+    onAddTransaction(transaction);
+    // Reset form and navigate
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <select name="type" value={formData.type} onChange={handleChange}>
+        <option value="expense">Expense</option>
+        <option value="income">Income</option>
+      </select>
+      <input type="text" name="description" placeholder="Description" required />
+      <input type="number" name="amount" placeholder="Amount" required />
+      <select name="category" required>
+        <option value="">Select Category</option>
+        {/* Dynamic categories based on type */}
+      </select>
+      <input type="date" name="date" />
+      <button type="submit">Add Transaction</button>
+    </form>
+  );
+}
+```
+
+---
+
 ### Page Components
 
-#### `Dashboard`
+#### 📊 **Dashboard Page**
 - **Route**: `/`
-- **Features**: Balance summary cards, transaction list, real-time calculations
+- **Description**: Main dashboard showing financial overview with balance summary cards and recent transactions list
+- **Features**: 
+  - Real-time balance calculations
+  - Total income and expense display
+  - Recent transactions list
+  - Delete transaction functionality
 
-#### `AddTransaction`
+**Basic Code:**
+```javascript
+function Dashboard({ transactions, onDelete }) {
+  // Calculate totals
+  const totalIncome = transactions
+    .filter(t => t.type === 'income')
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalExpense = transactions
+    .filter(t => t.type === 'expense')
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const balance = totalIncome - totalExpense;
+
+  return (
+    <div className="dashboard">
+      <h1>Dashboard</h1>
+      
+      {/* Balance Summary Cards */}
+      <div className="balance-summary">
+        <div className="balance-card total">
+          <h3>Total Balance</h3>
+          <p>${balance.toFixed(2)}</p>
+        </div>
+        <div className="balance-card income">
+          <h3>Total Income</h3>
+          <p>${totalIncome.toFixed(2)}</p>
+        </div>
+        <div className="balance-card expense">
+          <h3>Total Expenses</h3>
+          <p>${totalExpense.toFixed(2)}</p>
+        </div>
+      </div>
+
+      {/* Transaction List */}
+      <TransactionList transactions={transactions} onDelete={onDelete} />
+    </div>
+  );
+}
+```
+
+#### ➕ **Add Transaction Page**
 - **Route**: `/add`
-- **Features**: Clean form interface, validation, success feedback
+- **Description**: Dedicated page with a form to add new income or expense transactions
+- **Features**: 
+  - Type selection (Income/Expense)
+  - Form validation
+  - Dynamic category dropdown
+  - Auto-redirect after submission
 
-#### `Reports`
+**Basic Code:**
+```javascript
+function AddTransaction({ onAddTransaction }) {
+  return (
+    <div className="container">
+      <AddTransactionForm onAddTransaction={onAddTransaction} />
+    </div>
+  );
+}
+```
+
+**Full Form Implementation:**
+```javascript
+function AddTransaction({ onAddTransaction }) {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    type: 'expense',
+    description: '',
+    amount: '',
+    category: '',
+    date: new Date().toISOString().split('T')[0]
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!formData.description || !formData.amount || !formData.category) {
+      alert('Please fill all fields');
+      return;
+    }
+    
+    const transaction = {
+      id: Date.now(),
+      type: formData.type,
+      description: formData.description,
+      amount: parseFloat(formData.amount),
+      category: formData.category,
+      date: formData.date
+    };
+    
+    onAddTransaction(transaction);
+    navigate('/'); // Redirect to dashboard
+  };
+
+  return (
+    <form className="add-transaction-form" onSubmit={handleSubmit}>
+      <h2>Add Transaction</h2>
+      {/* Form fields here */}
+      <button type="submit">Add Transaction</button>
+    </form>
+  );
+}
+```
+
+#### 📈 **Reports Page**
 - **Route**: `/reports`
-- **Features**: Financial summary, category breakdowns, transaction statistics
+- **Description**: Financial analysis page showing detailed breakdown of income and expenses by category
+- **Features**: 
+  - Summary statistics
+  - Income by category
+  - Expenses by category (sorted by amount)
+  - Transaction count
+
+**Basic Code:**
+```javascript
+function Reports({ transactions }) {
+  // Calculate totals
+  const totalIncome = transactions
+    .filter(t => t.type === 'income')
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalExpense = transactions
+    .filter(t => t.type === 'expense')
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const balance = totalIncome - totalExpense;
+
+  // Group by category
+  const incomeByCategory = transactions
+    .filter(t => t.type === 'income')
+    .reduce((acc, t) => {
+      acc[t.category] = (acc[t.category] || 0) + t.amount;
+      return acc;
+    }, {});
+
+  const expenseByCategory = transactions
+    .filter(t => t.type === 'expense')
+    .reduce((acc, t) => {
+      acc[t.category] = (acc[t.category] || 0) + t.amount;
+      return acc;
+    }, {});
+
+  return (
+    <div className="reports">
+      <h2>Financial Reports</h2>
+
+      {/* Summary Section */}
+      <div className="report-section">
+        <h3>Summary</h3>
+        <div className="balance-summary">
+          <div className="balance-card total">
+            <h3>Net Balance</h3>
+            <p>${balance.toFixed(2)}</p>
+          </div>
+          <div className="balance-card income">
+            <h3>Total Income</h3>
+            <p>${totalIncome.toFixed(2)}</p>
+          </div>
+          <div className="balance-card expense">
+            <h3>Total Expenses</h3>
+            <p>${totalExpense.toFixed(2)}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Income by Category */}
+      <div className="report-section">
+        <h3>Income by Category</h3>
+        {Object.entries(incomeByCategory).map(([category, amount]) => (
+          <div key={category} className="category-item">
+            <span>{category}</span>
+            <span>${amount.toFixed(2)}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Expenses by Category */}
+      <div className="report-section">
+        <h3>Expenses by Category</h3>
+        {Object.entries(expenseByCategory)
+          .sort((a, b) => b[1] - a[1]) // Sort by amount
+          .map(([category, amount]) => (
+            <div key={category} className="category-item">
+              <span>{category}</span>
+              <span>${amount.toFixed(2)}</span>
+            </div>
+          ))}
+      </div>
+
+      {/* Statistics */}
+      <div className="report-section">
+        <h3>Transaction History</h3>
+        <p>Total Transactions: {transactions.length}</p>
+        <p>Income Transactions: {transactions.filter(t => t.type === 'income').length}</p>
+        <p>Expense Transactions: {transactions.filter(t => t.type === 'expense').length}</p>
+      </div>
+    </div>
+  );
+}
+```
+
+---
 
 ## 📚 Documentation
 
